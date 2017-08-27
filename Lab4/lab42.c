@@ -117,7 +117,7 @@ do{
   else if(ch == 3)
     traverse();
 
-  printf("\nContinue (y/n)");
+  printf("\nContinue? (y/n)");
   getchar();
   scanf("%c", &c);
 }while(c == 'y');

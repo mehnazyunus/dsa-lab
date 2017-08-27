@@ -9,40 +9,44 @@ struct node {
 struct node* head = NULL;
 
 struct node* XOR(struct node *a, struct node *b) {
-  return (struct node*) ((unsigned int) (a) ^ (unsigned int) (b));
+  return (struct node*) ((long long int) (a) ^ (long long int) (b));
 }
 
 void insert(int pos, int data) {
   struct node* newptr = (struct node*)malloc(sizeof(struct node));
   newptr->data = data;
-  //newptr->xnp = NULL;
+  
   newptr->xnp = XOR(head, NULL);
   if(head == NULL){
-    //newptr->xnp = XOR(head, NULL);
-    printf("Checking null\n");
     head = newptr;
     return;
   }
 
   if(pos == 1){
-    printf("Checking initial\n");
-    //newptr->xnp = XOR(head, NULL);
     struct node* next = XOR(head->xnp, NULL);
-    printf("1 done\n");
     head->xnp = XOR(next, newptr);
-    printf("2 done\n");
     head = newptr;
-    printf("3 done\n");
+  }
+  else {
+    int count = 1;
+    struct node *cur = head, *prev = NULL, *next=XOR(cur->xnp, prev);
+    while(count < pos - 1) {
+      prev = cur;
+      cur = next;
+      count++;
+      next = XOR(cur->xnp, prev);
+    }
+    newptr->xnp = XOR(cur, next);
+    cur->xnp = XOR(newptr, prev);
+    if(next)// if next is not null, ie, insertion is not taking place at end
+      next->xnp = XOR(newptr, XOR(cur, next->xnp));
   }
 }
 
 void traverse() {
-  struct node *cur = head, *prev = NULL, *next  ;
-  printf("traverse\n" );
+  struct node *cur = head, *prev = NULL, *next;
   while(cur != NULL){
-    printf("inside\n");
     printf("%d-->", cur->data);
-    printf("1 done\n");
     next = XOR(cur->xnp, prev);
     prev = cur;
     cur = next;
@@ -53,11 +57,28 @@ void traverse() {
 void delete(int pos){
   if(head == NULL)
     return;
-  else if(pos == 1){
+  if(pos == 1){
     struct node* throw = head;
     struct node* next = XOR(head->xnp, NULL);
     head = next;
+    if(head)
+      head->xnp = XOR(head->xnp, throw);
     free(throw);
+  }
+  else {
+    int count = 1;
+    struct node *cur = head, *prev = NULL, *next = XOR(cur->xnp, prev);
+    while(count < pos - 1) {
+      prev = cur;
+      cur = next;
+      next = XOR(cur->xnp, prev);
+      count++;
+    }
+    struct node *throw = next, *thrownext = XOR(throw->xnp, cur);
+    cur->xnp = XOR(thrownext, prev);
+    if(thrownext)
+      thrownext->xnp = XOR(XOR(thrownext->xnp, next), cur);
+    free(throw);  
   }
 }
 
