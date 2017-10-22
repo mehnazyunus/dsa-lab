@@ -1,3 +1,4 @@
+//maximum element in a binary tree
 //imprement binary tree using linked list - insertion, deletion, search
 #include<stdio.h>
 #include<stdlib.h>
@@ -55,21 +56,12 @@ void deleteSub(node* root) {
 void delete(node* root, int e) {
 	if(root == NULL)
 		return;
-	if(root->right != NULL) {
-		if(root->right->data == e) {
-			deleteSub(root->right);
-			free(root->right);
-			root->right = NULL;
-			return;
-		}
-	}
-	if(root->right != NULL ) {
-		if(root->left->data == e) {
-			deleteSub(root->left);
-			free(root->left);
-			root->left = NULL;
-			return;
-		}
+	if(root->data == e) {
+		deleteSub(root);
+		//node* temp = root;
+		root = NULL;
+		free(root);
+		return;
 	}
 	else {
 		delete(root->right, e);
@@ -77,12 +69,29 @@ void delete(node* root, int e) {
 	}
 }
 
+int maximum(int a, int b) {
+    if(a > b)
+        return a;
+    else 
+        return b;
+}
+int max(node* root) {
+    if(root == NULL) 
+        return -1;
+    if(root->right == NULL && root->left == NULL)
+            return root->data;
+    int maxr = max(root->right);
+    int maxl = max(root->left);
+    return maximum(maxr, maxl);
+} 
+
+
 void main() {
 	int i, k = 0;
 	node *root = NULL;
 	int ch;
 	do {
-		printf("\n1.Insert 2.Search 3.Traverse 4.Deletion 5.Exit");
+		printf("\n1.Insert 2.Search 3.Traverse 4.Deletion 6.MAX 5.Exit");
 		scanf("%d", &ch);
 		if(ch == 1) {
 			if(k == 0) {
@@ -117,15 +126,11 @@ void main() {
 			int e;
 			printf("\nEnter element to be deleted : ");
 			scanf("%d", &e);
-			if(root->data == e) {
-				free(root);
-				root = NULL;
-			}
-			else
-				delete(root, e);
+			delete(root, e);
 			inorder(root);
 		}
-
+		else if(ch == 6)
+			printf("%d ", max(root));
 
 
 	}while(ch != 5);
