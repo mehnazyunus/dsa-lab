@@ -63,7 +63,7 @@ void delete(node* root, int e) {
 			return;
 		}
 	}
-	if(root->right != NULL ) {
+	if(root->left != NULL ) {
 		if(root->left->data == e) {
 			deleteSub(root->left);
 			free(root->left);
